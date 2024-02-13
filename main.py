@@ -8,7 +8,7 @@ from sklearn.linear_model import LogisticRegression
 from sklearn.base import BaseEstimator
 from sklearn.model_selection import train_test_split
 from sklearn.ensemble import RandomForestClassifier
-from sklearn.metrics import accuracy_score
+from sklearn.metrics import accuracy_score, f1_score, classification_report, precision_score, recall_score
 
 LABEL_NAME = 'Class variable'
 
@@ -39,8 +39,12 @@ st.write(model)
 features = df.drop(LABEL_NAME, axis=1)
 labels = df[LABEL_NAME]
 
+test_size = st.slider('Test Size', 0.05, 0.95, 0.2, step=0.05)
+
 # Split the data into training and test sets
-features_train, features_test, labels_train, labels_test = train_test_split(features, labels, test_size=0.2, random_state=42)
+features_train, features_test, labels_train, labels_test = train_test_split(features, labels, test_size=test_size, random_state=42)
+st.write('Training Data Size', len(labels_train))
+st.write('Test Data Size', len(labels_test))
 
 # Train the model
 model.fit(features_train, labels_train)
@@ -55,3 +59,15 @@ st.write(labels_test)
 
 acc = accuracy_score(labels_test, predictions)
 st.metric('Accuracy', acc)
+f1 = f1_score(labels_test, predictions)
+st.metric('F1', f1)
+precision = precision_score(labels_test, predictions)
+st.metric('Precision', precision)
+recall = recall_score(labels_test, predictions)
+st.metric('Recall', recall)
+st.write(classification_report(labels_test, predictions, output_dict=True))
+# st.markdown(f"""
+# '''
+# {classification_report(labels_test, predictions, output_dict=False)}
+# '''
+# """)
